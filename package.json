@@ -1,0 +1,56 @@
+{
+  "name": "bili-liquid-glass",
+  "version": "0.1.22",
+  "private": true,
+  "description": "Lightweight local ambient light and glass theme for Bilibili",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "author": "Kiana-Zhang",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Kiana-Zhang/bili-liquid-glass.git"
+  },
+  "homepage": "https://github.com/Kiana-Zhang/bili-liquid-glass#readme",
+  "bugs": {
+    "url": "https://github.com/Kiana-Zhang/bili-liquid-glass/issues"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts tests/*.test.mjs",
+    "test:browser": "node scripts/browser-tests.mjs",
+    "test:extension": "node scripts/extension-tests.mjs",
+    "test:live": "node scripts/live-probe.mjs",
+    "test:surfaces": "node scripts/surface-tests.mjs",
+    "test:interactions": "node scripts/interaction-tests.mjs",
+    "test:scroll": "node scripts/scroll-tests.mjs",
+    "test:desktop": "node scripts/desktop-tests.mjs",
+    "test:insets": "node scripts/inset-tests.mjs",
+    "test:aspect": "node scripts/aspect-tests.mjs",
+    "test:performance": "node scripts/performance.mjs",
+    "preview": "node scripts/preview.mjs",
+    "report": "node scripts/report.mjs",
+    "check": "npm run typecheck && npm test && npm run build && npm run test:browser",
+    "test:optics": "node scripts/optics-tests.mjs",
+    "test:viewport": "node scripts/viewport-tests.mjs",
+    "test:menu": "node scripts/menu-tests.mjs",
+    "test:toolbar": "node scripts/toolbar-tests.mjs",
+    "test:first-scroll": "node scripts/first-scroll-tests.mjs",
+    "test:movies": "node scripts/movie-tests.mjs",
+    "test:bangumi-flow": "node scripts/bangumi-flow-tests.mjs",
+    "test:comment-loading": "node scripts/comment-loading-tests.mjs",
+    "test:donation": "node scripts/donation-tests.mjs"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.1.24",
+    "@types/node": "^24.0.0",
+    "esbuild": "^0.25.0",
+    "fflate": "^0.8.2",
+    "jsqr": "1.4.0",
+    "playwright": "^1.58.0",
+    "qrcode-generator": "1.4.4",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0",
+    "webm-muxer": "^5.1.4"
+  }
+}

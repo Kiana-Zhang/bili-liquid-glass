@@ -1,0 +1,209 @@
+html[data-blg-glass="on"] {
+  --blg-text: #202637;
+  --blg-muted: #626c7e;
+  --blg-surface: 246, 249, 255;
+  --blg-border: rgba(98,120,153,.13);
+  --blg-divider: rgba(98,120,153,.10);
+  --blg-field: rgba(246,249,255,min(.28,var(--blg-opacity,.78)));
+  --blg-focus: rgba(246,249,255,clamp(.14,var(--blg-opacity,.78),.52));
+  --blg-radius: 14px;
+  --blg-field-radius: 10px;
+  --line_regular: var(--blg-divider);
+  --line_light: var(--blg-divider);
+  --graph_weak: var(--blg-border);
+  --blg-subtle: rgba(114,139,172,.1);
+  --blg-shadow: 0 6px 24px rgba(38,62,104,.06);
+  --blg-page: #edf1f8;
+  --text1: var(--blg-text);
+  --text2: var(--blg-muted);
+  --text3: var(--blg-muted);
+  --bg1: var(--blg-page);
+  --bg2: var(--blg-subtle);
+  --graph_bg_regular: var(--blg-subtle);
+  color-scheme: light;
+  background: var(--blg-page) !important;
+}
+html[data-blg-theme="dark"] {
+  --blg-text: #e8edf6;
+  --blg-muted: #a5aec0;
+  --blg-surface: 24, 31, 45;
+  --blg-border: rgba(211,226,255,.15);
+  --blg-divider: rgba(211,226,255,.09);
+  --blg-field: rgba(154,178,221,min(.09,var(--blg-opacity,.78)));
+  --blg-focus: rgba(154,178,221,clamp(.10,var(--blg-opacity,.78),.16));
+  --blg-subtle: rgba(154,178,221,.09);
+  --blg-shadow: 0 8px 28px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.08);
+  --blg-page: #0e1420;
+  color-scheme: dark;
+}
+html[data-blg-glass="on"] body {
+  background: var(--blg-page) !important;
+  color: var(--blg-text);
+}
+html[data-blg-glass="on"] :is(.right-container,.plp-r) { margin-top:16px !important; }
+/* Clip incidental root overflow (fractional zoom/100vw plus a native vertical
+   scrollbar). Keep Bilibili's horizontal scrolling in narrow windows. */
+@media (min-width:1120px) {
+  html[data-blg-glass="on"], html[data-blg-glass="on"] body { overflow-x:clip !important; }
+}
+/* Hide complete promotional modules, including image-only activity banners.
+   Scoped to watching-page containers; player UI and recommendations remain. */
+html[data-blg-glass="on"] :is(.left-container,.plp-l) :is(.video-resource-list,.activity-m,.activity-m-v1,.video-vote,.vote-container,#activity_vote),
+html[data-blg-glass="on"] :is(.right-container,.plp-r) :is(.right-bottom-banner,.ad-floor-exp,.activity-banner) { display:none !important; }
+html[data-blg-glass="on"] :is(bili-comments-vote-card,.bili-danmaku-x-vote) { display:none !important; }
+html[data-blg-glass="on"] :is(#app, .video-container-v1, .video-container, .left-container, .right-container, .bangumi-player, .main-container, .plp-l, .plp-r) {
+  background-color: transparent !important;
+}
+html[data-blg-glass="on"] [data-blg-card] {
+  background: rgba(var(--blg-surface), var(--blg-opacity, .78)) !important;
+  border-radius: var(--blg-radius) !important;
+  border-color: var(--blg-divider) !important;
+  box-shadow: var(--blg-shadow);
+  outline: 1px solid var(--blg-border);
+  outline-offset: -1px;
+  backdrop-filter: blur(12px) saturate(1.12);
+  color: var(--blg-text);
+}
+html[data-blg-glass="on"] :is(#arc_toolbar_report, .video-toolbar, .video-toolbar-container, .media-wrapper, .media-info, .bangumi-info, .video-pod, .video-sections-content, .video-tag-container, .up-info-container, .recommend-list-v1) { border-color:var(--blg-divider) !important; }
+html[data-blg-glass="on"] :is(.video-toolbar-left, .video-toolbar-right, .media-info, .bangumi-info) :is(.divide, .divider, .split-line, .line) { background-color:var(--blg-divider) !important; border-color:var(--blg-divider) !important; }
+html[data-blg-glass="on"] :is(#viewbox_report, #arc_toolbar_report, #v_desc, .video-tag-container, .media-info, .media-wrapper, .bangumi-info, .media-info-wrp, [class*="mediainfo_mediaInfo__"]) { background:transparent !important; box-shadow:none !important; outline:none !important; backdrop-filter:none !important; }
+/* Inset content inside its existing section, without adding cards or changing
+   the width of the player/columns. Keep each section's native vertical spacing. */
+html[data-blg-glass="on"] :is(#arc_toolbar_report, .plp-l > .toolbar, .plp-l > .player-left-components > .toolbar, [class*="mediainfo_mediaInfoWrap__"], .right-container .recommend-list-v1, .plp-r [class*="recommend_wrap__"]) {
+  box-sizing:border-box !important;
+  padding-inline:16px !important;
+}
+html[data-blg-glass="on"] .plp-r [class*="recommend_wrap__"] { padding-bottom:16px !important; }
+html[data-blg-glass="on"] .right-container .recommend-list-v1 { padding-block:12px !important; }
+html[data-blg-glass="on"] .right-container .up-info-container {
+  box-sizing:border-box !important; padding:16px !important; height:auto !important; min-height:104px;
+}
+html[data-blg-glass="on"] .right-container .up-info-container .up-info--left { flex-shrink:0; }
+html[data-blg-glass="on"] .right-container .up-info-container .up-info--right {
+  flex:1 1 0 !important; min-width:0 !important; width:auto !important;
+}
+html[data-blg-glass="on"] [class*="mediainfo_mediaInfoWrap__"] { padding-bottom:16px !important; }
+html[data-blg-glass="on"] :is(.plp-l > .player-left-components > .toolbar, .plp-l > .toolbar) { background:transparent !important; box-shadow:none !important; outline:none !important; backdrop-filter:none !important; }
+html[data-blg-glass="on"] #viewbox_report :is(.video-info-title, .video-info-title-inner, .video-info-detail, .video-info-meta, .video-info-detail-list, .video-info-detail-content) { background:transparent !important; box-shadow:none !important; }
+html[data-blg-glass="on"] :is(#playerWrap, #bilibili-player, #bilibili-player-wrap) .bpx-player-container { box-shadow:none !important; outline:none !important; border-color:transparent !important; }
+/* The ordinary video page keeps its loading placeholder behind the live
+   player. Its bottom fill and shadow remain visible through transparent UI. */
+html[data-blg-glass="on"] #bilibili-player-placeholder { box-shadow:none !important; outline:none !important; border-color:transparent !important; border-radius:0 !important; }
+html[data-blg-glass="on"] :is(#bilibili-player-placeholder-bottom, #bilibili-player-placeholder-bottom-left, #bilibili-player-placeholder-bottom-right) { background:transparent !important; box-shadow:none !important; }
+html[data-blg-glass="on"] :is(.video-title, .video-desc-container, .video-desc-container .basic-desc-info, .up-name, .video-page-card-small .title, .video-pod .title, .video-info-title, .media-title, .media-info .title, .reply-content) {
+  color: var(--blg-text) !important;
+}
+html[data-blg-glass="on"] :is(.video-info-detail, .video-page-card-small .upname, .video-page-card-small .playinfo, .up-desc, .video-tag-container .tag-link, .reply-time) {
+  color: var(--blg-muted) !important;
+}
+html[data-blg-glass="on"] :is(.bili-header__bar, .international-header .mini-header) { border-radius:0 !important; }
+html[data-blg-glass="on"] :is(.bili-header__bar .left-entry-title, .bili-header__bar .right-entry-text) { color: var(--blg-text) !important; }
+html[data-blg-glass="on"] :is(.video-pod, .video-sections-content, .list-box, .recommend-list-v1, .right-container) :is(.pod-item, .video-page-card-small, .video-section-list, .list-box, .video-pod, .base-video-sections) {
+  background-color: transparent !important;
+  box-shadow: none;
+}
+/* Native collection rows use their own white active background. Keep the
+   playing animation and a blue tint without adding blur layers or side marks. */
+html[data-blg-glass="on"] :is(.video-pod,.video-sections-content) :is(.simple-base-item,.video-episode-card,.video-section-list-item) { background:transparent !important; }
+html[data-blg-glass="on"] :is(.video-pod,.video-sections-content) :is(.simple-base-item,.video-episode-card,.video-section-list-item):hover { background:var(--blg-field) !important; }
+html[data-blg-glass="on"] :is(.video-pod,.video-sections-content) :is(.simple-base-item.active,.video-episode-card.active,.video-section-list-item.active,[aria-current="true"]) {
+  background:rgba(0,174,236,.16) !important; box-shadow:none !important; border-radius:6px !important;
+}
+html[data-blg-glass="on"] :is(.video-pod,.video-sections-content) :is(.simple-base-item.active,.video-episode-card.active,.video-section-list-item.active,[aria-current="true"]) :is(.title,.title-txt) { color:var(--blg-text) !important; font-weight:600; }
+/* Popovers nested under a header/card need their own opaque enough surface,
+   but no additional blur layer. This also keeps login prompts readable. */
+html[data-blg-glass="on"] :is(.v-popover-content, .bili-popover, .van-popover, .bili-dialog, .bili-modal) {
+  background: rgba(var(--blg-surface), max(.94, var(--blg-opacity, .78))) !important;
+  color: var(--blg-text) !important;
+  border-color: var(--blg-border) !important;
+}
+html[data-blg-glass="on"] :is(.v-popover-content, .bili-popover, .van-popover) :is(.login-panel-popover, .login-panel, .popover-content) {
+  background: transparent !important;
+}
+html[data-blg-glass="on"] :is(.bpx-player-sending-area, .bilibili-player-video-sendbar) { --bg1: transparent; border-radius:0 0 var(--blg-radius) var(--blg-radius) !important; }
+html[data-blg-glass="on"] .bpx-player-sending-area::before { background:transparent !important; }
+/* Preserve rectangular video pixels; style only the bottom sending bar. */
+html[data-blg-glass="on"] :is(.bpx-player-container, .bilibili-player) { box-shadow:none !important; outline:none !important; border-radius:0 !important; }
+html[data-blg-glass="on"] .bpx-player-video-area { border-radius:0 !important; }
+html[data-blg-glass="on"] :is(.bpx-player-sending-area, .bilibili-player-video-sendbar)[data-blg-card] { outline:none !important; box-shadow:none !important; }
+html[data-blg-glass="on"] :is(.bpx-state-web, .bpx-state-web-fullscreen, .bilibili-player-mode-webfullscreen, [data-screen="web"], [data-screen="full"], .bpx-player-container:fullscreen) .bpx-player-video-area { border-radius:0 !important; }
+html[data-blg-glass="on"] :is(.bpx-player-container, .bilibili-player):is(.bpx-state-web, .bpx-state-web-fullscreen, [data-screen="web"], [data-screen="full"], :fullscreen),
+html[data-blg-glass="on"] :is(.bpx-state-web, .bpx-state-web-fullscreen) .bpx-player-container { border-radius:0 !important; }
+html[data-blg-glass="on"] :is(.danmaku-wrap, .bpx-player-dm-wrap, .bpx-player-dm-wrap-child, .bpx-player-dm-header, .bpx-player-dm-container, .bpx-player-dm-list, .bpx-player-dm-function) { background:transparent !important; border-color:var(--blg-divider) !important; border-radius:var(--blg-field-radius) !important; }
+html[data-blg-glass="on"] .bpx-player-collapse :is(.bui-collapse-body, .bpx-player-filter-wrap) { background:transparent !important; border-color:var(--blg-divider) !important; }
+html[data-blg-glass="on"] .bpx-player-collapse .bui-collapse-header { background:var(--blg-field) !important; border-radius:var(--blg-field-radius) !important; }
+/* Player styles are sometimes injected later with ID-qualified !important
+   rules. Match both major (video) and minor (danmaku) docker scopes. */
+html[data-blg-glass="on"] :is(#bilibili-player, #bilibiliPlayer, #danmukuBox, #danmakuBox, .bpx-docker) :is(.bpx-player-sending-area, .bpx-player-sending-bar, .bpx-player-video-info, .bpx-player-dm-root) { background:transparent !important; }
+html[data-blg-glass="on"] :is(#danmukuBox, #danmakuBox, .bpx-docker-minor) :is(.bui-collapse-header, .bui-collapse-body, .bpx-player-dm-wrap, .bpx-player-dm-wrap-child, .bpx-player-filter-wrap) { background:transparent !important; border-color:var(--blg-divider) !important; }
+/* Clear the auxiliary docker itself, not just the collapse descendants. */
+html[data-blg-glass="on"] :is(#danmukuBox, #danmakuBox, .danmaku-wrap) .bpx-docker-minor { background:transparent !important; }
+html[data-blg-glass="on"] :is(.plp-r, .right-container) :is([class*="SectionPanel_panel__"], .ep-list-wrapper, .episode-list, .season-list) { background:transparent !important; border-radius:var(--blg-field-radius) !important; }
+html[data-blg-glass="on"] :is(.plp-r, .right-container) :is([class*="EpisodeVirtualList_numberItem__"], [class*="EpisodeVirtualList_listItem__"], .ep-item, .episode-item) { background:var(--blg-field) !important; border-radius:var(--blg-field-radius) !important; }
+html[data-blg-glass="on"] :is(.plp-r, .right-container) :is([class*="EpisodeVirtualList_numberItem__"], [class*="EpisodeVirtualList_listItem__"], .ep-item, .episode-item):hover { background:var(--blg-focus) !important; }
+html[data-blg-glass="on"] :is(.plp-r, .right-container) :is([class*="EpisodeVirtualList_activeItem__"], .ep-item.active, .episode-item.active, [aria-current="page"]) { background:rgba(0,174,236,.20) !important; border-color:rgba(0,174,236,.45) !important; color:var(--brand_blue,#00aeec) !important; }
+html[data-blg-glass="on"] [class*="SectionTabs_menu__"] { background:rgba(var(--blg-surface),var(--blg-opacity,.78)) !important; border-radius:var(--blg-field-radius) !important; backdrop-filter:blur(12px); box-shadow:var(--blg-shadow); color:var(--blg-text) !important; }
+html[data-blg-glass="on"] :is([class*="SectionTabs_expand__"], [class*="mediainfo_ellipsis__"], .video-desc-container .toggle-btn, .video-desc-container .desc-btn) { background:var(--blg-field) !important; border-radius:6px; color:var(--brand_blue,#00aeec); }
+html[data-blg-glass="on"] :is([class*="mediainfo_ellipsis__"], .video-desc-container .toggle-btn, .video-desc-container .desc-btn)::before { background:none !important; }
+html[data-blg-glass="on"] :is(.bpx-player-sending-bar, .bpx-player-video-info, .bpx-player-dm-root) { background:transparent !important; border-color:var(--blg-divider) !important; }
+html[data-blg-glass="on"] .bpx-player-sending-bar { border-radius:inherit; }
+html[data-blg-glass="on"] :is(#nav-searchform, .bpx-player-video-inputbar, .reply-box-textarea, .comment-input) {
+  background:var(--blg-field) !important; border-color:var(--blg-border) !important;
+  border-radius:var(--blg-field-radius) !important; color:var(--blg-text) !important; box-shadow:none !important;
+}
+html[data-blg-glass="on"] :is(#nav-searchform, .bpx-player-video-inputbar, .reply-box-textarea, .comment-input):focus-within {
+  background:var(--blg-focus) !important; outline:2px solid rgba(64,167,208,.45); outline-offset:1px;
+}
+html[data-blg-glass="on"] :is(.nav-search-content, .nav-search-input, .bpx-player-dm-input, .bpx-player-dm-input-wrap, .bpx-player-video-preview-emoji-wrap) { background:transparent !important; color:var(--blg-text) !important; border-radius:inherit; }
+html[data-blg-glass="on"] :is(.nav-search-input, .bpx-player-dm-input, .reply-box-textarea)::placeholder { color:var(--blg-muted) !important; }
+.blg-ambient[hidden] { display:none !important; }
+/* Follow intrinsic media aspect in page/wide mode. Fullscreen removes these
+   marks; native mini mode keeps the page slot but uses its own player sizing. */
+[data-blg-player-size]:not(:is([data-screen="mini"],[data-screen="miniscreen"],.bpx-state-mini,.bpx-state-miniscreen)) { height:calc(var(--blg-video-height) + var(--blg-send-height)) !important; }
+[data-blg-player-size]:is(#bilibili-player-wrap,#bilibili-player-placeholder) { padding-top:0 !important; padding-bottom:0 !important; }
+[data-blg-player-size] #bilibili-player-placeholder-top { height:var(--blg-video-height) !important; padding-top:0 !important; }
+[data-blg-player-size] .bpx-docker-major { height:calc(var(--blg-video-height) + var(--blg-send-height)) !important; }
+[data-blg-player-size]:not(:has([data-screen="mini"],[data-screen="miniscreen"],.bpx-state-mini,.bpx-state-miniscreen)) :is(.bpx-player-container,.bpx-player-primary-area) { height:calc(var(--blg-video-height) + var(--blg-send-height)) !important; }
+[data-blg-player-size]:not(:is([data-screen="mini"],[data-screen="miniscreen"],.bpx-state-mini,.bpx-state-miniscreen)):not(:has([data-screen="mini"],[data-screen="miniscreen"],.bpx-state-mini,.bpx-state-miniscreen)) :is(.bpx-player-video-area,.bpx-player-video-perch,.bpx-player-video-wrap) { height:var(--blg-video-height) !important; }
+/* Keep the page slot/columns intact; center a smaller frame in the native
+   available width. Wide mode's native width may be wider than that slot. */
+[data-blg-fit-width] .bpx-docker-major,
+[data-blg-fit-width] #bilibili-player-placeholder,
+[data-blg-fit-width][data-blg-size-direct]:not(:is([data-screen="mini"],[data-screen="miniscreen"],.bpx-state-mini,.bpx-state-miniscreen)) {
+  width:var(--blg-video-width) !important;
+  margin-left:var(--blg-player-inset) !important;
+  margin-right:0 !important;
+}
+[data-blg-fit-width] .bpx-docker-major .bpx-player-container:not(:is([data-screen="mini"],[data-screen="miniscreen"],.bpx-state-mini,.bpx-state-miniscreen)),
+[data-blg-fit-width] .bpx-docker-major .bpx-player-container:not(:is([data-screen="mini"],[data-screen="miniscreen"],.bpx-state-mini,.bpx-state-miniscreen)) .bpx-player-primary-area,
+[data-blg-fit-width] #bilibili-player-placeholder-top { width:100% !important; }
+/* Normal bangumi overlays this column with the player in the same grid cell.
+   Wide mode already puts it in the next row, so keep its native zero padding.
+   Follow the wrapper's native mode immediately, including mini transitions. */
+[data-blg-player-flow="overlay"]:has(> .plp-player [class*="video_playerNormal__"]) > .plp-left-wrap { padding-top:var(--blg-player-flow-height) !important; }
+/* Fullscreen halo uses z=100. Lift the whole native toolbar, including its
+   quality/volume/subtitle/settings menus, so video and black-bar portions have
+   identical compositing. Native colors, opacity and auto-hide stay untouched. */
+html[data-blg-glass="on"] :is(.bpx-player-control-wrap,.bilibili-player-video-control) { z-index:101 !important; }
+[data-blg-static-layer] { position:relative; z-index:2 !important; }
+[data-blg-auto-layer] { z-index:2 !important; }
+[data-blg-player-layer] { z-index:3 !important; }
+[data-blg-player-layer]:is(.bpx-state-web, .bpx-state-web-fullscreen, .bilibili-player-mode-webfullscreen),
+[data-blg-player-layer]:has(.bpx-state-web, .bpx-state-web-fullscreen, .bilibili-player-mode-webfullscreen) { z-index:100000 !important; }
+[data-blg-player-static] { position:relative; }
+.blg-player-button {
+  appearance:none; box-sizing:border-box; border:0; border-radius:7px; margin:-2px 6px 0; padding:0 6px;
+  display:inline-flex; align-items:center; justify-content:center; align-self:flex-start; vertical-align:middle; height:26px;
+  background:rgba(255,255,255,.13); color:#fff;
+  font:600 14px/22px -apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  cursor:pointer; flex-shrink:0; white-space:nowrap;
+}
+.blg-player-button:hover { background:rgba(255,255,255,.25); }
+.blg-player-button:focus-visible { outline:2px solid #63cde9; outline-offset:2px; }
+@media (prefers-reduced-motion: reduce) {
+  .blg-ambient { transition:none !important; }
+  html[data-blg-glass="on"] [data-blg-card] { transition:none !important; }
+}
+@supports not (backdrop-filter:blur(1px)) {
+  html[data-blg-glass="on"] [data-blg-card] { background:rgb(var(--blg-surface)) !important; }
+}
