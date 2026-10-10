@@ -1,8 +1,10 @@
+import { LANGUAGES, type Language } from './i18n';
 export type Theme = 'system' | 'dark' | 'light';
 export type Quality = 'economy' | 'balanced' | 'fine';
 export type Projection = 'straight' | 'diagonal';
 export interface Settings {
   version: 2;
+  language: Language;
   enabled: boolean;
   transparency: number;
   spread: number;
@@ -15,7 +17,7 @@ export const SETTINGS_KEY = 'biliLiquidGlass.settings';
 export const DEFAULTS: Readonly<Settings> = Object.freeze({
   version: 2, enabled: true, transparency: 65,
   spread: 35, softness: 65, projection: 'diagonal',
-  theme: 'system', quality: 'balanced',
+  theme: 'system', quality: 'balanced', language: 'zh',
 });
 export const PRESETS = {
   economy: { width: 128, fps: 12, label: '省电' },
@@ -45,6 +47,7 @@ export function normalizeSettings(value: unknown): Settings {
   if (typeof raw.theme==='string' && ['system', 'light', 'dark'].includes(raw.theme)) result.theme = raw.theme as Theme;
   if (typeof raw.quality==='string' && ['economy', 'balanced', 'fine'].includes(raw.quality)) result.quality = raw.quality as Quality;
   if (typeof raw.projection==='string' && ['straight', 'diagonal'].includes(raw.projection)) result.projection = raw.projection as Projection;
+  if (typeof raw.language === 'string' && Object.hasOwn(LANGUAGES, raw.language)) result.language = raw.language as Language;
   return result;
 }
 
@@ -112,7 +115,7 @@ export class SettingsStore {
     this.queue = write;
     return write.finally(() => { this.pending--; return this.reconcileChanges(); });
   }
-  reset(): Promise<void> { return this.update({ ...DEFAULTS }); }
+  reset(): Promise<void> { return this.update({ ...DEFAULTS, language: this.value.language }); }
   dispose(): void {
     this.disposed=true; this.deferredSettings=null;
     this.unlisten?.(); this.unlisten=undefined; this.listeners.clear();

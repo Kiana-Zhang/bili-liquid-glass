@@ -1,3 +1,4 @@
+import { t, type MessageKey } from './i18n';
 import { boundedSize, exclusionPolygon, type Layout } from './geometry';
 import { PRESETS, type Quality, type Settings } from './settings';
 
@@ -82,7 +83,7 @@ export class AmbientRenderer {
   private anchor: {target: HTMLElement; name: string; value: string; priority: string; applied: string} | null = null;
   mode: 'webgl' | 'canvas' = 'webgl';
 
-  constructor(settings: Settings, private onNotice: (notice: string) => void = () => {}, forceCanvas = false) {
+  constructor(settings: Settings, private onNotice: (notice: MessageKey) => void = () => {}, forceCanvas = false) {
     this.settings = settings; this.quality = settings.quality;
     this.host.className = 'blg-ambient';
     this.host.setAttribute('aria-hidden', 'true');
@@ -91,11 +92,11 @@ export class AmbientRenderer {
     this.canvas.style.cssText = 'display:block;width:100%;height:100%;pointer-events:none;';
     this.host.append(this.canvas);
     const context = this.sample.getContext('2d', { alpha: false });
-    if (!context) throw new Error('浏览器无法创建视频采样画布');
+    if (!context) throw new Error(t(this.settings.language, 'sampleFailed'));
     this.sampleContext = context;
     this.originProbe.width=this.originProbe.height=1;
     const probe=this.originProbe.getContext('2d',{alpha:false,willReadFrequently:true});
-    if (!probe) throw new Error('浏览器无法创建视频安全性检测画布');
+    if (!probe) throw new Error(t(this.settings.language, 'probeFailed'));
     this.originContext=probe;
     if (!forceCanvas) {
       try { this.glState = this.createGL(); } catch { this.glState = null; }
@@ -258,7 +259,7 @@ export class AmbientRenderer {
   private onContextLost = (event: Event): void => {
     event.preventDefault();
     this.releaseGL(); this.activateFallback();
-    this.onNotice('GPU 上下文丢失，已切换为省电 Canvas 渲染');
+    this.onNotice('gpuFallback');
     this.resize();
   };
   private activateFallback(): void {
@@ -269,7 +270,7 @@ export class AmbientRenderer {
     next.style.maskComposite = 'intersect';
     this.canvas.replaceWith(next); this.canvas = next;
     this.fallback = next.getContext('2d', { alpha: true });
-    if (!this.fallback) throw new Error('浏览器无法创建氛围光画布');
+    if (!this.fallback) throw new Error(t(this.settings.language, 'canvasFailed'));
     this.mode = 'canvas'; this.fallbackHasFrame = false;
   }
   private resize(): void {

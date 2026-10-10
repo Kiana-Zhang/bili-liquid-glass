@@ -1,3 +1,4 @@
+import { t, type MessageKey, type MessageParams } from './i18n';
 import { PageAdapter, type PlayerBinding } from './adapter';
 import { effectLayout, effectVisibility, fittedVideoRect, type Rect } from './geometry';
 import { AmbientRenderer } from './renderer';
@@ -5,7 +6,7 @@ import { AdaptiveQuality, FrameGate } from './scheduler';
 import { DEFAULTS, PRESETS, type Settings } from './settings';
 import { PlayerSizer } from './player-size';
 
-export interface PlayerStatus { message: string; state: 'ok' | 'idle' | 'warning' }
+export interface PlayerStatus { message: string; state: 'ok' | 'idle' | 'warning'; key?: MessageKey; params?: MessageParams }
 export interface Diagnostics {
   mode: string; frames: number; averageDrawMs: number; quality: string;
   sample: [number, number]; buffer: [number, number]; scheduled: boolean;
@@ -37,7 +38,7 @@ export class PlaybackController {
   private scrollMini = false;
   private pageVideo: Rect | null = null;
   private sizer: PlayerSizer;
-  status: PlayerStatus = { message:'正在等待视频画面',state:'idle' };
+  status: PlayerStatus = { message:t(DEFAULTS.language, 'waitingVideo'),state:'idle',key:'waitingVideo' };
 
   constructor(readonly binding: PlayerBinding, private adapter: PageAdapter, private onStatus: (status: PlayerStatus) => void) {
     this.sizer=new PlayerSizer(binding);
@@ -78,6 +79,7 @@ export class PlaybackController {
   configure(settings: Settings): void {
     const changedQuality = this.settings.quality !== settings.quality;
     this.settings = settings;
+    if (this.status.key) this.report(this.status.key, this.status.state, this.status.params);
     if (changedQuality) this.adaptive.reset(settings.quality);
     if (settings.enabled) {
       if (!this.renderer && !this.blocked) {
@@ -121,13 +123,13 @@ export class PlaybackController {
     this.renderer?.show(this.visible() && !this.blocked && this.settings.enabled,this.viewportWeight);
     if (this.runnable()) this.schedule(); else this.cancelFrames();
     if (this.blocked) return;
-    if (!this.settings.enabled) this.report('沉浸光感已关闭','idle');
-    else if (!this.visible()) this.report('光效已休眠 · 扩散范围不可见或处于小窗','idle');
-    else if (this.mini) this.report('悬浮小窗 · 保留原位置扩散余光','idle');
-    else if (this.binding.video.readyState<2) this.report('正在等待视频画面','idle');
-    else if (this.buffering) this.report('视频缓冲中 · 保留当前光效','idle');
-    else if (this.binding.video.paused || this.binding.video.ended) this.report('已暂停 · 保留当前光效','idle');
-    else this.report(`氛围光运行中 · ${PRESETS[this.adaptive.current].label}${this.renderer?.mode==='canvas'?' · 兼容模式':''}`,'ok');
+    if (!this.settings.enabled) this.report('disabled','idle');
+    else if (!this.visible()) this.report('sleeping','idle');
+    else if (this.mini) this.report('mini','idle');
+    else if (this.binding.video.readyState<2) this.report('waitingVideo','idle');
+    else if (this.buffering) this.report('buffering','idle');
+    else if (this.binding.video.paused || this.binding.video.ended) this.report('paused','idle');
+    else this.report('running','ok',{ quality: this.adaptive.current, mode: this.renderer?.mode ?? 'webgl' });
   }
   private schedule(): void {
     if (this.videoRequest!==null || this.rafRequest!==null) return;
@@ -159,13 +161,13 @@ export class PlaybackController {
         }
         this.lastDropCheck=now; this.decoded=quality?.totalVideoFrames??0; this.dropped=quality?.droppedVideoFrames??0;
       }
-      if (changed) { renderer.configure(this.settings,this.adaptive.current); this.report(`光效已自动降为${PRESETS[this.adaptive.current].label}档`,'ok'); }
+      if (changed) { renderer.configure(this.settings,this.adaptive.current); this.report('downgraded','ok',{ quality: this.adaptive.current }); }
     } catch (error) { this.fail(error); }
   }
   private fail(error: unknown): void {
     this.blocked=true; this.cancelFrames(); this.renderer?.dispose(); this.renderer=null;
     const security=error instanceof DOMException && error.name==='SecurityError';
-    this.report(security?'此视频限制画面读取 · 动态光效已关闭，玻璃主题仍可用':'光效暂不可用 · 请刷新页面重试，玻璃主题仍可用','warning');
+    this.report(security?'protectedVideo':'effectFailed','warning');
   }
   private cancelFrames(): void {
     if (this.videoRequest!==null) { this.binding.video.cancelVideoFrameCallback?.(this.videoRequest); this.videoRequest=null; }
@@ -216,8 +218,9 @@ export class PlaybackController {
     // source video is still fully outside the viewport.
     this.sync();
   }
-  private report(message: string,state: PlayerStatus['state']): void {
+  private report(messageKey: MessageKey,state: PlayerStatus['state'], params?: MessageParams): void {
+    const message = t(this.settings.language, messageKey, params);
     const key=`${state}:${message}`; if (key===this.lastStatus) return;
-    this.lastStatus=key; this.status={message,state}; this.onStatus(this.status);
+    this.lastStatus=key; this.status={message,state,key:messageKey,params}; this.onStatus(this.status);
   }
 }

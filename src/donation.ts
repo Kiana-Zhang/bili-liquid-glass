@@ -1,10 +1,7 @@
+import { t, translate, type Language } from './i18n';
 import qrcode from 'qrcode-generator';
 
-const DONATION = {
-  alipay: 'https://qr.alipay.com/fkx139599r7p33uofsallfa?0&T=58744-10-24 06:29:28',
-  wechat: 'wxp://f2f0T8_Y_uEvBlr6K2MjzP9SSWOlRT48xtqmy-hzNGEzfK4',
-  kofi: 'https://ko-fi.com/yanami_annna',
-} as const;
+import { DONATION } from './support';
 
 // PayPal's vector mark, bundled locally; opening the popover never fetches it.
 // Source: https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-mark-color.svg
@@ -39,19 +36,20 @@ export class DonationPopover {
   private observer: ResizeObserver;
   private timer: ReturnType<typeof setTimeout> | undefined;
   private pinned = false;
+  private language: Language = 'zh';
   private generated = false;
   private popupWidths: {element: HTMLElement; value: string; priority: string}[] = [];
   constructor(private root: ShadowRoot, private trigger: HTMLButtonElement, private popup: boolean) {
     this.layer.className = 'donation-popover'; this.layer.id = 'donation-options'; this.layer.hidden = true;
-    this.layer.setAttribute('role', 'dialog'); this.layer.setAttribute('aria-label', '打赏方式');
+    this.layer.setAttribute('role', 'dialog'); this.layer.dataset.i18nAria = 'donationOptions';
     this.layer.setAttribute('aria-modal', 'false');
-    this.layer.innerHTML = `<div class="donation-heading"><span>感谢你的支持 <span aria-hidden="true">♥</span></span><button type="button" class="donation-close" aria-label="关闭打赏">×</button></div>
+    this.layer.innerHTML = `<div class="donation-heading"><span><span data-i18n="thanks">感谢你的支持</span> <span aria-hidden="true">♥</span></span><button type="button" class="donation-close" aria-label="关闭打赏" data-i18n-aria="closeDonation">×</button></div>
       <div class="donation-columns">
-        <div class="payment-card alipay"><strong>支付宝</strong><div class="payment-qr" data-payment="alipay"></div><small>支付宝扫一扫</small></div>
-        <div class="payment-card wechat"><strong>微信</strong><div class="payment-qr" data-payment="wechat"></div><small>微信扫一扫</small></div>
-        <div class="payment-card kofi"><strong>Ko-fi</strong><a class="payment-qr paypal-link" href="${DONATION.kofi}" target="_blank" rel="noopener noreferrer" aria-label="前往打赏">${PAYPAL_MARK}</a><small>点击前往打赏 ↗</small></div>
+        <div class="payment-card alipay"><strong data-i18n="alipay">支付宝</strong><div class="payment-qr" data-payment="alipay"></div><small data-i18n="scanAlipay">支付宝扫一扫</small></div>
+        <div class="payment-card wechat"><strong data-i18n="wechat">微信</strong><div class="payment-qr" data-payment="wechat"></div><small data-i18n="scanWechat">微信扫一扫</small></div>
+        <div class="payment-card kofi"><strong>Ko-fi</strong><a class="payment-qr paypal-link" href="${DONATION.kofi}" target="_blank" rel="noopener noreferrer" aria-label="前往打赏" data-i18n-aria="visitDonation">${PAYPAL_MARK}</a><small data-i18n="donationLink">点击前往打赏 ↗</small></div>
       </div>`;
-    root.append(this.layer);
+    root.append(this.layer); this.setLanguage(this.language);
     const options = {signal:this.abort.signal};
     trigger.addEventListener('pointerenter', () => this.open(), options);
     trigger.addEventListener('pointerleave', () => this.scheduleClose(), options);
@@ -73,12 +71,19 @@ export class DonationPopover {
     this.observer = new ResizeObserver(this.position);
     this.observer.observe(root.querySelector('.panel')!); this.observer.observe(this.layer);
   }
+  setLanguage(language: Language): void {
+    this.language = language; this.layer.lang = language;
+    translate(this.layer, language);
+    this.layer.setAttribute('aria-label', t(language, 'donationOptions'));
+    for (const key of ['alipay', 'wechat'] as const) this.layer.querySelector(`[data-payment="${key}"] svg`)?.setAttribute('aria-label', t(language, key === 'alipay' ? 'alipayQr' : 'wechatQr'));
+    this.position();
+  }
   get isOpen(): boolean { return !this.layer.hidden; }
   private open(): void {
     clearTimeout(this.timer);
     if (this.isOpen) return;
     if (!this.generated) {
-      for (const key of ['alipay','wechat'] as const) this.layer.querySelector(`[data-payment="${key}"]`)!.append(paymentQr(DONATION[key], key === 'alipay' ? '支付宝收款二维码' : '微信收款二维码'));
+      for (const key of ['alipay','wechat'] as const) this.layer.querySelector(`[data-payment="${key}"]`)!.append(paymentQr(DONATION[key], t(this.language, key === 'alipay' ? 'alipayQr' : 'wechatQr')));
       this.generated = true;
     }
     if (this.popup) {

@@ -1,3 +1,4 @@
+import { t } from './i18n';
 import { PageAdapter, pageKind } from './adapter';
 import { PlaybackController, type PlayerStatus } from './controller';
 import { SettingsStore } from './settings';
@@ -17,7 +18,7 @@ class ExtensionApp {
   private routeTimer: number|undefined;
   private route='';
   private unstore: (()=>void)|undefined;
-  private status: PlayerStatus={message:'请打开 Bilibili 普通视频或番剧观看页',state:'idle'};
+  private status: PlayerStatus={message:t(this.store.value.language, 'openPage'),state:'idle',key:'openPage'};
   private abort=new AbortController();
   private disposed=false;
   private messageEvent: typeof chrome.runtime.onMessage | undefined;
@@ -34,7 +35,7 @@ class ExtensionApp {
     if (!this.ensureContext()) return;
     this.unstore=this.store.subscribe(settings=>{
       if (!this.ensureContext()) return;
-      this.theme.configure(settings,this.adapter); this.controller?.configure(settings);
+      this.theme.configure(settings,this.adapter); this.controller?.configure(settings); this.translateButton();
     });
     this.observer.observe(document.body,{childList:true,subtree:true});
     window.addEventListener('popstate',this.queueRefresh,{signal:this.abort.signal});
@@ -68,13 +69,13 @@ class ExtensionApp {
     const kind=pageKind(); this.route=location.pathname;
     if (!kind) {
       this.teardownPlayer(); this.adapter=null; this.theme.clear();
-      this.setStatus({message:'请打开 Bilibili 普通视频或番剧观看页',state:'idle'}); return;
+      this.setStatus({message:t(this.store.value.language, 'openPage'),state:'idle',key:'openPage'}); return;
     }
     if (this.adapter?.kind!==kind) this.adapter=new PageAdapter(kind);
     const adapter=this.adapter!, binding=adapter.findPlayer();
     this.theme.configure(this.store.value,adapter,binding);
     if (!binding) {
-      this.teardownPlayer(); this.setStatus({message:'正在等待 Bilibili 播放器',state:'idle'}); return;
+      this.teardownPlayer(); this.setStatus({message:t(this.store.value.language, 'waitingPlayer'),state:'idle',key:'waitingPlayer'}); return;
     }
     if (this.controller?.binding.video!==binding.video || this.controller.binding.player!==binding.player) {
       this.teardownPlayer(); this.controller=new PlaybackController(binding,adapter,status=>this.setStatus(status));
@@ -84,8 +85,7 @@ class ExtensionApp {
       this.buttonResize?.disconnect();
       this.button?.remove();
       this.button=document.createElement('button'); this.button.className='blg-player-button';
-      this.button.textContent='✦ 光感'; this.button.type='button'; this.button.title='沉浸光感设置';
-      this.button.setAttribute('aria-label','打开沉浸光感设置');
+      this.button.type='button'; this.translateButton();
       this.button.setAttribute('aria-haspopup','dialog');this.button.setAttribute('aria-expanded','false');
       this.button.addEventListener('click',event=>{event.stopPropagation();this.openPanel();});
       binding.controls.prepend(this.button);
@@ -93,6 +93,13 @@ class ExtensionApp {
       this.buttonResize.observe(binding.controls);
     }
     this.syncButton();
+  }
+  private translateButton(): void {
+    if (!this.button) return;
+    const language = this.store.value.language, text = t(language, 'playerButton');
+    if (this.button.textContent !== text) this.button.textContent = text;
+    this.button.lang = language; this.button.title = t(language, 'settingsLabel');
+    this.button.setAttribute('aria-label', t(language, 'openSettings'));
   }
   private syncButton():void {
     if(!this.ensureContext()||!this.button)return;
@@ -108,7 +115,7 @@ class ExtensionApp {
     if (!this.ensureContext()) return;
     if (this.panel) { this.closePanel(); return; }
     this.panel=new SettingsPanel(this.store,false,restoreFocus=>this.closePanel(restoreFocus),this.button??undefined);
-    this.panel.setStatus(this.status.message,this.status.state);
+    this.panel.setStatus(this.status.message,this.status.state,this.status.key,this.status.params);
     (this.controller?.binding.player??document.fullscreenElement??document.body).append(this.panel.host);
     this.button?.setAttribute('aria-expanded','true');this.panel.position();this.panel.focus();
   }
@@ -118,7 +125,7 @@ class ExtensionApp {
     if(restoreFocus)this.button?.focus({preventScroll:true});
   }
   private setStatus(status: PlayerStatus): void {
-    this.status=status; this.panel?.setStatus(status.message,status.state);
+    this.status=status; this.panel?.setStatus(status.message,status.state,status.key,status.params);
   }
   private teardownPlayer(): void {
     this.buttonResize?.disconnect();this.buttonResize=null;
@@ -135,6 +142,7 @@ class ExtensionApp {
     if (!globalThis.chrome?.runtime?.id) { this.dispose(); return false; }
     return true;
   }
+  get language() { return this.store.value.language; }
   dispose(): void {
     if (this.disposed) return;
     this.disposed=true;
@@ -154,5 +162,5 @@ scope.__blgApp?.dispose();
 const app=new ExtensionApp(); scope.__blgApp=app;
 void app.start().catch(error=>{
   app.dispose();
-  if (globalThis.chrome?.runtime?.id) console.warn('[Bili Liquid Glass] 初始化失败，请刷新页面。',error);
+  if (globalThis.chrome?.runtime?.id) console.warn('[Bili Liquid Glass] '+t(app.language, 'initFailed'),error);
 });

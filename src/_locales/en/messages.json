@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "Bili Liquid Glass · Ambient Light & Glass"
+  },
+  "extensionDescription": {
+    "message": "Soft ambient lighting that follows video colors and a glass theme for Bilibili watch pages. Video frames are processed locally."
+  },
+  "actionTitle": {
+    "message": "Bili Liquid Glass settings"
+  }
+}

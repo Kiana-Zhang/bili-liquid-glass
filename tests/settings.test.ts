@@ -44,7 +44,7 @@ test('an earlier queued failure does not block later writes',async()=>{
 test('v1 migrates opacity in reverse, removes independent controls, and persists v2',async()=>{
   const old={version:1,enabled:true,ambient:false,glass:true,brightness:100,glassOpacity:5,spread:100,softness:0,theme:'dark',quality:'fine'};
   const value=normalizeSettings(old);
-  assert.deepEqual(value,{version:2,enabled:true,transparency:95,spread:100,softness:0,projection:'diagonal',theme:'dark',quality:'fine'});
+  assert.deepEqual(value,{version:2,enabled:true,transparency:95,spread:100,softness:0,projection:'diagonal',theme:'dark',quality:'fine',language:'zh'});
   assert.equal(normalizeSettings({...old,enabled:false}).enabled,false);
   assert.equal(normalizeSettings({...old,ambient:false,glass:false}).enabled,false);
   assert.equal(normalizeSettings({...old,glassOpacity:0}).transparency,100);

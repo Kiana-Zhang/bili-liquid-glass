@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Bili Liquid Glass · 氛围光与玻璃",
-  "version": "0.1.22",
-  "description": "随视频画面扩散的柔和氛围光，以及跟随系统明暗的 Bilibili 观看页玻璃主题。视频帧仅在本机处理。",
+  "name": "__MSG_extensionName__",
+  "version": "0.1.23",
+  "description": "__MSG_extensionDescription__",
   "minimum_chrome_version": "121",
   "permissions": [
     "storage"
@@ -14,7 +14,7 @@
     "128": "icons/128.png"
   },
   "action": {
-    "default_title": "Bili Liquid Glass 设置",
+    "default_title": "__MSG_actionTitle__",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/16.png",
@@ -37,5 +37,6 @@
   ],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'none'"
-  }
+  },
+  "default_locale": "zh_CN"
 }

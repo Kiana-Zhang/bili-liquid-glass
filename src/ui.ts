@@ -1,3 +1,4 @@
+import { LANGUAGES, t, translate, type MessageKey, type MessageParams } from './i18n';
 import uiCss from './ui.css';
 import { DonationPopover } from './donation';
 import { type Settings, type SettingsStore } from './settings';
@@ -9,6 +10,10 @@ export class SettingsPanel {
   private savedTimer: number | undefined;
   private status: HTMLElement;
   private live: HTMLElement;
+  private statusMessage = '';
+  private statusKey?: MessageKey;
+  private statusParams?: MessageParams;
+  private saveKey?: 'saved' | 'saveFailed';
   private onClose: ((restoreFocus?:boolean) => void) | undefined;
   private abort=new AbortController();
   private resize:ResizeObserver|null=null;
@@ -19,27 +24,27 @@ export class SettingsPanel {
     this.host.dataset.popup = String(popup);
     this.root = this.host.attachShadow({ mode: 'open' });
     this.root.innerHTML = `<style>${uiCss}</style>
-      <section class="panel" ${popup ? '' : 'role="dialog" aria-modal="false"'} aria-label="沉浸光感设置">
-        <header><h1>光感设置</h1>${popup ? '' : '<button class="close" type="button" aria-label="关闭设置">×</button>'}</header>
+      <section class="panel" ${popup ? '' : 'role="dialog" aria-modal="false"'} aria-label="沉浸光感设置" data-i18n-aria="settingsLabel">
+        <header><h1 data-i18n="settings">光感设置</h1><select class="language" name="language" data-i18n-aria="language" aria-label="语言">${Object.entries(LANGUAGES).map(([value, label]) => '<option value="'+value+'" lang="'+value+'">'+label+'</option>').join('')}</select>${popup ? '' : '<button class="close" type="button" aria-label="关闭设置" data-i18n-aria="closeSettings">×</button>'}</header>
         <div class="status" hidden><span id="status" role="status"></span></div>
         <form>
-          <label class="master"><span><strong>沉浸光感</strong><small>开启会屏蔽部分广告和活动等</small></span><input aria-label="沉浸光感" name="enabled" type="checkbox" role="switch"></label>
-          <label class="slider"><span>透明度 <output data-output="transparency"></output></span><input aria-label="透明度" name="transparency" type="range" min="0" max="100" step="1"></label>
-          <label class="slider"><span>扩散范围 <output data-output="spread"></output></span><input aria-label="扩散范围" name="spread" type="range" min="0" max="200" step="1"></label>
-          <label class="select-row"><span>扩散方向</span><select aria-label="扩散方向" name="projection"><option value="diagonal">斜向扩散</option><option value="straight">直向扩散</option></select></label>
-          <label class="slider"><span>柔和度 <output data-output="softness"></output></span><input aria-label="柔和度" name="softness" type="range" min="0" max="100" step="1"></label>
-          <label class="select-row"><span>外观</span><select aria-label="外观" name="theme"><option value="system">跟随系统</option><option value="light">浅色玻璃</option><option value="dark">深色沉浸</option></select></label>
-          <label class="select-row"><span>性能档位</span><select aria-label="性能档位" name="quality"><option value="economy">省电 · 12 FPS</option><option value="balanced">均衡 · 24 FPS</option><option value="fine">细腻 · 30 FPS</option></select></label>
+          <label class="master"><span><strong data-i18n="enabled">沉浸光感</strong><small data-i18n="enabledHint">开启会屏蔽部分广告和活动等</small></span><input aria-label="沉浸光感" data-i18n-aria="enabled" name="enabled" type="checkbox" role="switch"></label>
+          <label class="slider"><span><span data-i18n="transparency">透明度</span> <output data-output="transparency"></output></span><input aria-label="透明度" data-i18n-aria="transparency" name="transparency" type="range" min="0" max="100" step="1"></label>
+          <label class="slider"><span><span data-i18n="spread">扩散范围</span> <output data-output="spread"></output></span><input aria-label="扩散范围" data-i18n-aria="spread" name="spread" type="range" min="0" max="200" step="1"></label>
+          <label class="select-row"><span data-i18n="projection">扩散方向</span><select aria-label="扩散方向" data-i18n-aria="projection" name="projection"><option value="diagonal" data-i18n="diagonal">斜向扩散</option><option value="straight" data-i18n="straight">直向扩散</option></select></label>
+          <label class="slider"><span><span data-i18n="softness">柔和度</span> <output data-output="softness"></output></span><input aria-label="柔和度" data-i18n-aria="softness" name="softness" type="range" min="0" max="100" step="1"></label>
+          <label class="select-row"><span data-i18n="theme">外观</span><select aria-label="外观" data-i18n-aria="theme" name="theme"><option value="system" data-i18n="system">跟随系统</option><option value="light" data-i18n="light">浅色玻璃</option><option value="dark" data-i18n="dark">深色沉浸</option></select></label>
+          <label class="select-row"><span data-i18n="quality">性能档位</span><select aria-label="性能档位" data-i18n-aria="quality" name="quality"><option value="economy" data-i18n="economy" data-fps="12">省电 · 12 FPS</option><option value="balanced" data-i18n="balanced" data-fps="24">均衡 · 24 FPS</option><option value="fine" data-i18n="fine" data-fps="30">细腻 · 30 FPS</option></select></label>
         </form>
-        <footer><button id="reset" type="button">恢复默认</button><button id="donate" type="button" aria-expanded="false" aria-controls="donation-options" aria-haspopup="dialog"><span aria-hidden="true">♥</span> 打赏支持</button></footer>
+        <footer><button id="reset" type="button" data-i18n="reset">恢复默认</button><button id="donate" type="button" aria-expanded="false" aria-controls="donation-options" aria-haspopup="dialog"><span aria-hidden="true">♥</span> <b data-i18n="donate">打赏支持</b></button></footer>
         <span id="saved" class="save-status" role="status" aria-live="polite"></span>
-        <p class="privacy"><span aria-hidden="true">◌</span> 视频帧在本机处理 · 无上传 · 无遥测</p>
+        <p class="privacy"><span aria-hidden="true">◌</span> <span data-i18n="privacy">视频帧在本机处理 · 无上传 · 无遥测</span></p>
       </section>`;
     this.status = this.root.querySelector('#status')!;
     this.live = this.root.querySelector('#saved')!;
     this.donation = new DonationPopover(this.root,this.root.querySelector<HTMLButtonElement>('#donate')!,popup);
     this.root.querySelector('form')!.addEventListener('submit', e => e.preventDefault());
-    this.root.querySelector('form')!.addEventListener('change', this.onChange);
+    this.root.addEventListener('change', this.onChange);
     this.root.querySelector('form')!.addEventListener('input', e => {
       const input = e.target as HTMLInputElement;
       if (input.type === 'range') {
@@ -63,8 +68,9 @@ export class SettingsPanel {
       this.resize.observe(this.root.querySelector('.panel')!);if(anchor)this.resize.observe(anchor);
     }
   }
-  setStatus(message: string, state: 'ok' | 'idle' | 'warning' = 'idle'): void {
-    this.status.textContent = message;
+  setStatus(message: string, state: 'ok' | 'idle' | 'warning' = 'idle', key?: MessageKey, params?: MessageParams): void {
+    this.statusMessage = message; this.statusKey = key; this.statusParams = params;
+    this.status.textContent = key ? t(this.store.value.language, key, params) : message;
     // Keep actionable failures; routine playback/pause descriptions add noise.
     (this.root.querySelector('.status') as HTMLElement).hidden = state !== 'warning';
   }
@@ -101,20 +107,25 @@ export class SettingsPanel {
   };
   private async persist(write: Promise<void>): Promise<void> {
     try {
-      await write; this.live.classList.remove('error'); this.live.textContent = '已保存';
+      await write; this.saveKey = 'saved'; this.live.classList.remove('error'); this.live.textContent = t(this.store.value.language, this.saveKey);
       clearTimeout(this.savedTimer);
-      this.savedTimer = window.setTimeout(() => { this.live.textContent = ''; },1800);
-    } catch { clearTimeout(this.savedTimer); this.live.classList.add('error'); this.live.textContent = '保存失败，请重新打开设置'; }
+      this.savedTimer = window.setTimeout(() => { this.saveKey = undefined; this.live.textContent = ''; },1800);
+    } catch { clearTimeout(this.savedTimer); this.live.classList.add('error'); this.saveKey = 'saveFailed'; this.live.textContent = t(this.store.value.language, this.saveKey); }
   }
   private rangeProgress(input:HTMLInputElement):void {
     input.style.setProperty('--progress',`${Number(input.value)/Number(input.max)*100}%`);
   }
   private render(settings: Settings): void {
+    this.host.lang = settings.language;
+    translate(this.root, settings.language);
+    this.donation.setLanguage(settings.language);
+    this.status.textContent = this.statusKey ? t(settings.language, this.statusKey, this.statusParams) : this.statusMessage;
+    if (this.saveKey) this.live.textContent = t(settings.language, this.saveKey);
     for (const input of this.root.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input,select')) {
       const key = input.name as keyof Settings;
       if (input instanceof HTMLInputElement && input.type === 'checkbox') input.checked = Boolean(settings[key]);
       else input.value = String(settings[key]);
-      input.disabled = key !== 'enabled' && !settings.enabled;
+      input.disabled = key !== 'enabled' && key !== 'language' && !settings.enabled;
       if(input instanceof HTMLInputElement&&input.type==='range')this.rangeProgress(input);
     }
     for (const key of ['transparency','spread','softness'] as const) {

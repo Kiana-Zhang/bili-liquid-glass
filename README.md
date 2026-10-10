@@ -1,14 +1,24 @@
 # Bili Liquid Glass
 
+[简体中文](README.md) · [English](README.en.md) · [日本語](README.ja.md) · [한국어](README.ko.md)
+
 为 Bilibili 视频和番剧观看页添加随画面变化的氛围光，以及可调透明度的玻璃主题。支持桌面 Chrome、Edge，视频画面只在你的设备上处理。
 
-**当前版本：0.1.22 · 源码公开、非商业许可**
+**源码版本：0.1.23 · 源码公开、非商业许可**
+
+## 效果图
+
+| 普通视频氛围光 | 明亮彩色扩散 |
+| --- | --- |
+| ![普通视频氛围光](assets/screenshots/ambient-light.png) | ![明亮彩色扩散](assets/screenshots/colorful-light.png) |
+| 柔和氛围光 | 深色沉浸效果 |
+| ![柔和氛围光](assets/screenshots/soft-light.png) | ![深色沉浸效果](assets/screenshots/dark-light.png) |
 
 ## 下载与安装
 
-[下载 Chrome 安装包](https://github.com/Kiana-Zhang/bili-liquid-glass/releases/download/v0.1.22/bili-liquid-glass-chrome-0.1.22.zip) · [下载 Edge 安装包](https://github.com/Kiana-Zhang/bili-liquid-glass/releases/download/v0.1.22/bili-liquid-glass-edge-0.1.22.zip) · [查看所有版本](https://github.com/Kiana-Zhang/bili-liquid-glass/releases)
+[下载扩展（Chrome / Edge）](https://github.com/Kiana-Zhang/bili-liquid-glass/releases)
 
-在 Releases 中选择对应浏览器的安装包。GitHub 自动提供的「Source code」是源码压缩包；安装扩展请下载上面的 Chrome／Edge ZIP。
+在 Releases 中选择对应浏览器的安装包。GitHub 自动提供的「Source code」是源码压缩包；安装扩展请下载对应版本的 Chrome／Edge ZIP。
 
 1. 将安装包解压到一个你准备长期保留的文件夹。
 2. 在 Chrome 地址栏输入 `chrome://extensions`；Edge 输入 `edge://extensions`。
@@ -34,6 +44,7 @@
 
 | 设置 | 使用说明 |
 | --- | --- |
+| 语言 | 在面板顶部选择简体中文、English、日本語或한국어，即时生效并保存。默认简体中文；关闭光效后也能切换，恢复默认会保留当前语言。 |
 | 沉浸光感 | 同时开启或关闭氛围光和玻璃主题。关闭后恢复网站原有外观。 |
 | 透明度 | 越高，玻璃越透明、氛围光越强。默认 65；设为 0 时光效消失，但玻璃背景模糊仍会保留。 |
 | 范围 | 调整光效向外扩散的距离，范围为 0–200。 |
@@ -83,6 +94,20 @@
 视频帧在本机处理，不上传、不保存为截图。设置仅保存在当前浏览器，不收集观看记录、账号资料或设备统计，也没有遥测和分析服务。详细信息见 [隐私说明](PRIVACY.md)。
 
 设置面板中的打赏入口完全自愿，不影响功能。支付宝和微信二维码在本机生成；标有 PayPal 图标的入口会打开 Ko-fi 页面。付款由对应支付应用或网站处理，扩展不会自动付款，也不会读取付款信息。
+
+| 支付宝 | 微信 | Ko-fi / PayPal |
+| --- | --- | --- |
+| [打开支付宝收款链接](https://qr.alipay.com/fkx139599r7p33uofsallfa?0&T=58744-10-24%2006:29:28) | [查看微信收款二维码](assets/support/wechat.png) | [前往 Ko-fi 打赏](https://ko-fi.com/yanami_annna) |
+
+| 支付宝 | 微信 |
+| --- | --- |
+| <img src="assets/support/alipay.png" alt="支付宝收款二维码" width="180"> | <img src="assets/support/wechat.png" alt="微信收款二维码" width="180"> |
+
+以上链接与二维码和插件内完全一致。微信请使用微信扫一扫；PayPal 图标入口对应 Ko-fi，并非独立 PayPal 收款地址。
+
+## 从源码构建
+
+安装 Node.js 后，在项目目录运行 `npm ci` 和 `npm run build`，然后加载 `dist/chrome` 或 `dist/edge`。运行 `npm run check` 检查类型、单元测试、构建和浏览器回归，`npm run test:i18n` 检查四种语言、同步保存及窄面板布局。源码版本可能领先于 Releases，新增功能可通过本地构建体验。
 
 ## 使用许可
 

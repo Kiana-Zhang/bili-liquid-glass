@@ -23,11 +23,11 @@ async function preview(): Promise<void> {
   const theme=new GlassTheme();
   const panel=new SettingsPanel(store,true);
   document.querySelector('#preview-settings')?.append(panel.host);
-  const controller=new PlaybackController(binding,adapter,status=>panel.setStatus(status.message,status.state));
+  const controller=new PlaybackController(binding,adapter,status=>panel.setStatus(status.message,status.state,status.key,status.params));
   store.subscribe((settings:Settings)=>{theme.configure(settings,adapter);controller.configure(settings);});
   document.querySelector('#open-settings')?.addEventListener('click',()=>{
     const dialog=new SettingsPanel(store,false,()=>dialog.dispose(),document.querySelector<HTMLElement>('#open-settings')??undefined);
-    dialog.setStatus(controller.status.message,controller.status.state);document.body.append(dialog.host);dialog.position();dialog.focus();
+    dialog.setStatus(controller.status.message,controller.status.state,controller.status.key,controller.status.params);document.body.append(dialog.host);dialog.position();dialog.focus();
   });
 }
 void preview();

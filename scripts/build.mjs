@@ -1,6 +1,6 @@
 import { build } from 'esbuild';
 import { zipSync, zlibSync } from 'fflate';
-import { mkdir, readFile, writeFile, copyFile, readdir, rm, stat } from 'node:fs/promises';
+import { mkdir, readFile, writeFile, copyFile, cp, readdir, rm, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -17,6 +17,7 @@ await build({entryPoints:[path.join(root,'src/content.ts'),path.join(root,'src/p
   await writeFile(path.join(dist,'build-meta.json'),JSON.stringify(result.metafile,null,2));
 });
 for (const name of ['manifest.json','theme.css','popup.html','popup.css']) await copyFile(path.join(root,'src',name),path.join(common,name));
+await cp(path.join(root,'src','_locales'),path.join(common,'_locales'),{recursive:true});
 await copyFile(path.join(root,'LICENSE'),path.join(common,'LICENSE.txt'));
 await copyFile(path.join(root,'PRIVACY.md'),path.join(common,'PRIVACY.md'));
 await copyFile(path.join(root,'THIRD_PARTY_NOTICES.txt'),path.join(common,'THIRD_PARTY_NOTICES.txt'));

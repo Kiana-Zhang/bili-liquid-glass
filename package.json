@@ -1,6 +1,6 @@
 {
   "name": "bili-liquid-glass",
-  "version": "0.1.22",
+  "version": "0.1.23",
   "private": true,
   "description": "Lightweight local ambient light and glass theme for Bilibili",
   "license": "PolyForm-Noncommercial-1.0.0",
@@ -39,7 +39,9 @@
     "test:movies": "node scripts/movie-tests.mjs",
     "test:bangumi-flow": "node scripts/bangumi-flow-tests.mjs",
     "test:comment-loading": "node scripts/comment-loading-tests.mjs",
-    "test:donation": "node scripts/donation-tests.mjs"
+    "test:donation": "node scripts/donation-tests.mjs",
+    "test:i18n": "node scripts/i18n-tests.mjs",
+    "support:assets": "node scripts/support-assets.mjs"
   },
   "devDependencies": {
     "@types/chrome": "^0.1.24",
